@@ -199,10 +199,17 @@ async function cargar(manual) {
     ]);
 
     var cont = document.getElementById('cont');
+    // Mostrar diagnóstico temporal
+    cont.innerHTML = '<div class="cargando" id="diag">Analizando respuesta...<br><small style="font-size:11px;color:#aaa" id="diag-txt"></small></div>';
+
+    var jugados = lastData.response || [];
+    document.getElementById('diag-txt').textContent =
+      'last=15 respuesta: '+jugados.length+' partidos | errors: '+JSON.stringify(lastData.errors)+
+      ' | remaining: '+(lastData.paging ? JSON.stringify(lastData.paging) : 'n/a');
+
+    await new Promise(function(r){ setTimeout(r, 2000); }); // pausa 2s para leer
     cont.innerHTML = '';
 
-    // Detectar jornada más reciente
-    var jugados = lastData.response || [];
     var maxRound = 0;
     jugados.forEach(function(f){
       var n = parseInt((f.league.round.match(/\d+/)||[0])[0]);
