@@ -8,13 +8,21 @@
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body { font-family:'Inter',sans-serif; background:#f1f3f4; color:#202124; font-size:17px; min-height:100vh; }
-  header { background:#fff; border-bottom:1px solid #e0e0e0; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 1px 4px rgba(0,0,0,.08); }
-  .header-left { display:flex; align-items:center; gap:12px; }
-  .header-titulo { font-size:20px; font-weight:700; }
-  .header-sub { font-size:13px; color:#5f6368; margin-top:1px; }
-  .reloj { font-size:15px; color:#5f6368; font-weight:500; }
-  .btn-refresh { background:none; border:1.5px solid #dadce0; border-radius:8px; padding:7px 14px; font-size:14px; font-weight:600; color:#1a73e8; cursor:pointer; display:flex; align-items:center; gap:6px; }
-  .btn-refresh:hover { background:#e8f0fe; }
+  header {
+    background:#111111;
+    padding:14px 20px 10px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:100;
+    box-shadow:0 1px 4px rgba(0,0,0,.3);
+  }
+  .header-left { display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+  .header-textos { display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .header-titulo { font-size:20px; font-weight:700; color:#fff; }
+  .header-sub { font-size:12px; color:rgba(255,255,255,.6); }
+  .header-dedicatoria { font-size:11px; color:rgba(255,255,255,.5); font-style:italic; margin-top:2px; }
+  .reloj { font-size:14px; color:rgba(255,255,255,.7); font-weight:500; flex-shrink:0; }
+  .btn-refresh { background:none; border:1.5px solid rgba(255,255,255,.3); border-radius:8px; padding:6px 12px; font-size:13px; font-weight:600; color:#fff; cursor:pointer; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+  .btn-refresh:hover { background:rgba(255,255,255,.1); }
   .spin { animation:girar .8s linear infinite; }
   @keyframes girar { to{transform:rotate(360deg);} }
   .contenido { max-width:720px; margin:0 auto; padding:20px 16px 40px; }
@@ -65,9 +73,9 @@
   .pie-act { text-align:center; font-size:12px; color:#5f6368; padding:8px; }
   @media(max-width:480px){
     .partido,.proximo { grid-template-columns:1fr 90px 1fr; padding:12px 10px; }
-    .eq-nom { font-size:13px; }
-    .marcador { font-size:22px; }
+    .eq-nom { font-size:13px; } .marcador { font-size:22px; }
     .escudo-p { width:30px; height:30px; }
+    .header-dedicatoria { display:none; }
   }
 </style>
 </head>
@@ -75,12 +83,13 @@
 <header>
   <div class="header-left">
     <img src="data:image/png;base64,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" alt="LaLiga" style="width:52px;height:52px;object-fit:contain;">
-    <div>
+    <div class="header-textos">
       <div class="header-titulo">La Liga</div>
       <div class="header-sub" id="h-sub">Temporada 2025/26</div>
+      <div class="header-dedicatoria">Para Antonio, maestro de la paella y rey del cocido, seguidor del Atl&eacute;tico de Madrid porque nadie es perfecto &#127859;&#9917;</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
     <div class="reloj" id="reloj"></div>
     <button class="btn-refresh" onclick="cargar(true)" id="btn-ref">
       <svg id="ico-ref" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -91,9 +100,6 @@
     </button>
   </div>
 </header>
-<div style="background:#fff7ed;border-bottom:1px solid #fde8c8;padding:10px 20px;text-align:center;font-size:15px;color:#92400e;font-style:italic;">
-  Para Antonio, maestro de la paella y rey del cocido, seguidor del Atl&eacute;tico de Madrid porque nadie es perfecto. 🥘⚽
-</div>
 
 <div class="contenido" id="cont">
   <div class="cargando"><div class="spinner"></div>Cargando datos...</div>
@@ -137,15 +143,14 @@ const NOMBRES_ES = {
   LEV:"Levante UD", OVI:"Real Oviedo"
 };
 
-// API-Football team ID -> abbreviation
 const TEAM_ABR = {
   529:"BAR", 541:"RMA", 530:"ATM", 533:"VIL", 543:"RBB",
   558:"RCC", 538:"ESP", 548:"RSO", 531:"ATH", 727:"OSA",
   546:"GET", 536:"SEV", 547:"GIR", 532:"VCF", 728:"RVC",
-  542:"ALA", 727:"OSA", 724:"ELC", 534:"MAL", 723:"LEV", 725:"OVI"
+  542:"ALA", 724:"ELC", 534:"MAL", 723:"LEV", 725:"OVI"
 };
 
-function abr(id) { return TEAM_ABR[id] || null; }
+function abrId(id) { return TEAM_ABR[id] || null; }
 
 function mkImg(a, size) {
   var img = document.createElement('img');
@@ -160,7 +165,6 @@ function mkNom(a, name, cls) {
   s.textContent = (a && NOMBRES_ES[a]) ? NOMBRES_ES[a] : name;
   return s;
 }
-
 function fmtFecha(iso) {
   return new Date(iso).toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'});
 }
@@ -187,40 +191,47 @@ async function cargar(manual) {
   if (manual) ico.classList.add('spin');
 
   try {
-    // Fetch jornada actual + clasificación en paralelo (2 peticiones)
-    var hoy = new Date().toISOString().split('T')[0];
-    var [fixturesData, standingsData] = await Promise.all([
-      apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&round=current'),
+    // 1) Últimos 15 partidos jugados para detectar jornada actual
+    // 2) Clasificación
+    var [lastData, standingsData] = await Promise.all([
+      apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&last=15'),
       apif('/standings?league='+LEAGUE+'&season='+SEASON)
     ]);
 
     var cont = document.getElementById('cont');
     cont.innerHTML = '';
 
-    // ── PARTIDOS JORNADA ACTUAL ──
-    var fixtures = fixturesData.response || [];
+    // Detectar jornada más reciente
+    var jugados = lastData.response || [];
+    var maxRound = 0;
+    jugados.forEach(function(f){
+      var n = parseInt((f.league.round.match(/\d+/)||[0])[0]);
+      if (n > maxRound) maxRound = n;
+    });
+
+    // Pedir TODOS los partidos de esa jornada (incluye programados de hoy)
+    var roundStr = 'Regular Season - ' + maxRound;
+    var jornData = await apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&round='+encodeURIComponent(roundStr));
+    var fixtures = jornData.response || [];
     fixtures.sort(function(a,b){ return new Date(a.fixture.date)-new Date(b.fixture.date); });
 
+    // ── PARTIDOS JORNADA ACTUAL ──
     if (fixtures.length) {
-      var ronda = fixtures[0].league.round || '';
-      var numRonda = ronda.match(/\d+/) ? ronda.match(/\d+/)[0] : ronda;
-      document.getElementById('h-sub').textContent = 'Jornada '+numRonda+' · 2025/26';
-
+      document.getElementById('h-sub').textContent = 'Jornada '+maxRound+' · 2025/26';
       var secP = document.createElement('div'); secP.className='seccion';
-      secP.innerHTML = '<div class="sec-titulo">Jornada '+numRonda+'</div>';
+      secP.innerHTML = '<div class="sec-titulo">Jornada '+maxRound+'</div>';
 
       fixtures.forEach(function(f) {
-        var ha = abr(f.teams.home.id);
-        var aa = abr(f.teams.away.id);
+        var ha = abrId(f.teams.home.id);
+        var aa = abrId(f.teams.away.id);
         var status = f.fixture.status.short;
-        var live = ['1H','HT','2H','ET','BT','P','SUSP','INT'].indexOf(status) >= 0;
-        var finished = status === 'FT' || status === 'AET' || status === 'PEN';
+        var live = ['1H','HT','2H','ET','BT','P'].indexOf(status) >= 0;
+        var finished = ['FT','AET','PEN'].indexOf(status) >= 0;
         var gH = f.goals.home;
         var gA = f.goals.away;
         var min = f.fixture.status.elapsed;
 
         var row = document.createElement('div'); row.className='partido';
-
         var dH = document.createElement('div'); dH.className='eq-home';
         dH.appendChild(mkNom(ha, f.teams.home.name, 'home'));
         dH.appendChild(mkImg(ha, 38));
@@ -228,7 +239,7 @@ async function cargar(manual) {
         var dC = document.createElement('div'); dC.className='centro';
         if (finished || live) {
           var marc = document.createElement('div'); marc.className='marcador';
-          marc.innerHTML = (gH !== null ? gH : '-') + '<span class="sep">–</span>' + (gA !== null ? gA : '-');
+          marc.innerHTML=(gH!==null?gH:'-')+'<span class="sep">–</span>'+(gA!==null?gA:'-');
           dC.appendChild(marc);
           var est = document.createElement('div');
           if (finished) { est.className='estado final'; est.textContent='Final'; }
@@ -243,7 +254,6 @@ async function cargar(manual) {
         var dA = document.createElement('div'); dA.className='eq-away';
         dA.appendChild(mkImg(aa, 38));
         dA.appendChild(mkNom(aa, f.teams.away.name, ''));
-
         row.appendChild(dH); row.appendChild(dC); row.appendChild(dA);
         secP.appendChild(row);
       });
@@ -259,9 +269,8 @@ async function cargar(manual) {
       var tbl = document.createElement('table'); tbl.className='tabla';
       tbl.innerHTML='<thead><tr><th style="width:32px">#</th><th class="eq-col">Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>Pts</th></tr></thead>';
       var tbody = document.createElement('tbody');
-
       tabla.forEach(function(t) {
-        var a = abr(t.team.id);
+        var a = abrId(t.team.id);
         var pos = t.rank;
         var zona = pos<=4?'zona-ch':pos<=6?'zona-el':pos===7?'zona-conf':pos>=18?'zona-rel':'';
         var tr = document.createElement('tr'); if(zona) tr.className=zona;
@@ -270,16 +279,15 @@ async function cargar(manual) {
         var cel=document.createElement('div'); cel.className='celda-eq';
         cel.appendChild(mkImg(a,26));
         var n=document.createElement('span'); n.className='eq-nom-t';
-        n.textContent=(a && NOMBRES_ES[a]) ? NOMBRES_ES[a] : t.team.name;
+        n.textContent=(a&&NOMBRES_ES[a])?NOMBRES_ES[a]:t.team.name;
         cel.appendChild(n); tdE.appendChild(cel); tr.appendChild(tdE);
-        [t.all.played, t.all.win, t.all.draw, t.all.lose].forEach(function(v){
+        [t.all.played,t.all.win,t.all.draw,t.all.lose].forEach(function(v){
           var td=document.createElement('td'); td.textContent=v; tr.appendChild(td);
         });
         var tdPts=document.createElement('td'); tdPts.className='pts-t'; tdPts.textContent=t.points; tr.appendChild(tdPts);
         tbody.appendChild(tr);
       });
-      tbl.appendChild(tbody);
-      secC.appendChild(tbl);
+      tbl.appendChild(tbody); secC.appendChild(tbl);
       secC.innerHTML += '<div class="leyenda">'+
         '<div class="ley"><div class="ley-dot" style="background:#1a73e8"></div>Champions</div>'+
         '<div class="ley"><div class="ley-dot" style="background:#34a853"></div>Europa</div>'+
@@ -289,28 +297,18 @@ async function cargar(manual) {
       cont.appendChild(secC);
     }
 
-    // ── PRÓXIMOS (siguiente jornada) ──
-    var nextData = await apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&round=next');
-    // Si no hay "next", buscar la siguiente ronda manualmente
+    // ── PRÓXIMA JORNADA ──
+    var nextRound = maxRound + 1;
+    var nextRoundStr = 'Regular Season - ' + nextRound;
+    var nextData = await apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&round='+encodeURIComponent(nextRoundStr));
     var proximos = nextData.response || [];
-
-    if (!proximos.length) {
-      // Calcular siguiente ronda
-      var numActual = parseInt(fixtures.length ? (fixtures[0].league.round.match(/\d+/)||[0])[0] : 0);
-      var nextRound = 'Regular Season - ' + (numActual+1);
-      var nextData2 = await apif('/fixtures?league='+LEAGUE+'&season='+SEASON+'&round='+encodeURIComponent(nextRound));
-      proximos = nextData2.response || [];
-    }
+    proximos.sort(function(a,b){ return new Date(a.fixture.date)-new Date(b.fixture.date); });
 
     if (proximos.length) {
-      proximos.sort(function(a,b){ return new Date(a.fixture.date)-new Date(b.fixture.date); });
-      var rondaNext = proximos[0].league.round || '';
-      var numNext = rondaNext.match(/\d+/) ? rondaNext.match(/\d+/)[0] : rondaNext;
       var secN = document.createElement('div'); secN.className='seccion';
-      secN.innerHTML='<div class="sec-titulo">Jornada '+numNext+' · Próximos partidos</div>';
-
+      secN.innerHTML='<div class="sec-titulo">Jornada '+nextRound+' · Próximos partidos</div>';
       proximos.forEach(function(f) {
-        var ha=abr(f.teams.home.id), aa=abr(f.teams.away.id);
+        var ha=abrId(f.teams.home.id), aa=abrId(f.teams.away.id);
         var row=document.createElement('div'); row.className='proximo';
         var dH=document.createElement('div'); dH.className='eq-home';
         dH.appendChild(mkNom(ha,f.teams.home.name,'home')); dH.appendChild(mkImg(ha,38));
@@ -334,13 +332,9 @@ async function cargar(manual) {
       '<div class="cargando">⚠️ Error: '+e.message+'<br><br>'+
       '<button onclick="cargar(true)" style="background:#1a73e8;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">Reintentar</button></div>';
   }
-
   document.getElementById('ico-ref').classList.remove('spin');
 }
 
-// Auto-refresco inteligente:
-// Si estamos en horario de partidos (13h-23h) -> cada 5 minutos
-// Fuera de ese horario -> cada 30 minutos
 function programarRefresco() {
   var h = new Date().getHours();
   var intervalo = (h >= 13 && h < 23) ? 5*60*1000 : 30*60*1000;
