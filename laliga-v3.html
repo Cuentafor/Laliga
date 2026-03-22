@@ -230,8 +230,9 @@ nav{background:var(--card);border-bottom:1px solid var(--borde);display:flex;box
 </div>
 
 <script>
-const API='https://api.football-data.org/v4',COMP='PD',PROXY='https://corsproxy.io/?';
-let TOKEN='',curMD=1,maxMD=38,compData=null;
+const API='https://api.football-data.org/v4',COMP='PD';
+const PROXIES=['https://corsproxy.io/?','https://api.allorigins.win/raw?url=','https://cors-anywhere.herokuapp.com/',''];
+let TOKEN='',curMD=1,maxMD=38,compData=null,workingProxy=null;
 
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('fdata_token');
@@ -245,11 +246,28 @@ function tickClock(){
   document.getElementById('r-fecha').textContent=n.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'});
 }
 
-/* ---- API via CORS proxy ---- */
+/* ---- API via CORS proxy (con fallback) ---- */
 async function apiFetch(ep){
-  const url=API+ep;let r;
-  try{r=await fetch(PROXY+encodeURIComponent(url),{headers:{'X-Auth-Token':TOKEN}});}
-  catch(e){throw new Error('Error de red: '+e.message);}
+  const url=API+ep;
+  // Si ya sabemos qué proxy funciona, usarlo
+  if(workingProxy!==null) return doFetch(workingProxy,url);
+  // Probar cada proxy
+  for(let i=0;i<PROXIES.length;i++){
+    try{
+      const data=await doFetch(PROXIES[i],url);
+      workingProxy=PROXIES[i];
+      return data;
+    }catch(e){
+      if(i===PROXIES.length-1) throw new Error('No se pudo conectar con ningún servidor.\nPrueba con otro navegador (Firefox o Chrome).\n\nÚltimo error: '+e.message);
+    }
+  }
+}
+
+async function doFetch(proxy,url){
+  const fullUrl=proxy?proxy+encodeURIComponent(url):url;
+  let r;
+  try{r=await fetch(fullUrl,{headers:{'X-Auth-Token':TOKEN}});}
+  catch(e){throw new Error(e.message);}
   if(!r.ok){
     if(r.status===403)throw new Error('Token inválido o sin permisos');
     if(r.status===429)throw new Error('Límite alcanzado (10 req/min). Espera un momento.');
