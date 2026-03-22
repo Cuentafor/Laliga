@@ -264,9 +264,11 @@ async function apiFetch(ep){
 }
 
 async function doFetch(proxy,url){
-  const fullUrl=proxy?proxy+encodeURIComponent(url):url;
+  const bust='_cb='+Date.now();
+  const urlBust=url+(url.includes('?')?'&':'?')+bust;
+  const fullUrl=proxy?proxy+encodeURIComponent(urlBust):urlBust;
   let r;
-  try{r=await fetch(fullUrl,{headers:{'X-Auth-Token':TOKEN}});}
+  try{r=await fetch(fullUrl,{headers:{'X-Auth-Token':TOKEN},cache:'no-store'});}
   catch(e){throw new Error(e.message);}
   if(!r.ok){
     if(r.status===403)throw new Error('Token inválido o sin permisos');
