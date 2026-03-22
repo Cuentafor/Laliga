@@ -453,8 +453,14 @@ function renderDetail(det,data){
     });
   }else{html+='<div class="det-empty">Sin tarjetas</div>';}
   html+='</div>';
+  // Debug button
+  const debugId='dbg-'+Math.random().toString(36).slice(2,8);
+  html+='<div style="margin-top:12px;text-align:center;"><button onclick="document.getElementById(\''+debugId+'\').style.display=\'block\'" style="background:var(--borde);color:var(--sub);border:none;padding:8px 16px;border-radius:6px;font-size:14px;cursor:pointer;">🔍 Ver datos API (diagnóstico)</button></div>';
+  html+='<pre id="'+debugId+'" style="display:none;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;color:var(--sub);overflow-x:auto;white-space:pre-wrap;word-break:break-all;max-height:400px;overflow-y:auto;">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
   det.innerHTML=html;
 }
+
+function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ---- HISTORIC ---- */
 function populateSeasons(seasons){
