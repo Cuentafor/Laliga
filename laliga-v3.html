@@ -272,6 +272,9 @@ async function doConnect(){
     curMD=compData.currentSeason.currentMatchday||1;
     populateSeasons(compData.seasons||[]);
     loadStandings();loadMatchday(curMD);loadUpcoming();loadScorers();
+    // Auto-refresh jornada cada 60 segundos
+    if(window._refreshTimer) clearInterval(window._refreshTimer);
+    window._refreshTimer=setInterval(()=>{ loadMatchday(curMD); },60000);
   }catch(e){
     document.getElementById('cfgErr').textContent=e.message;
     document.getElementById('btnCfg').disabled=false;
