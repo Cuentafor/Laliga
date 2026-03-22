@@ -72,12 +72,10 @@ nav{background:var(--card);border-bottom:1px solid var(--borde);display:flex;box
 .linea-fecha{flex:1;height:1px;background:var(--borde);}
 
 /* MATCH CARDS */
-.tarjeta-wrap{margin-bottom:12px;}
-.tarjeta{background:var(--blanco);border:1.5px solid var(--borde);border-radius:16px;padding:22px 16px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .2s;cursor:pointer;}
+.tarjeta{background:var(--blanco);border:1.5px solid var(--borde);border-radius:16px;padding:22px 16px;margin-bottom:12px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .2s;}
 .tarjeta:hover{box-shadow:0 6px 24px rgba(0,0,0,.3);border-color:#2a3344;}
 .tarjeta.en-directo{border-color:var(--rojo);background:var(--rojo-dim);box-shadow:0 0 0 3px rgba(231,76,60,.12),0 6px 24px rgba(0,0,0,.3);}
-.tarjeta.programado{background:var(--card);cursor:default;}
-.tarjeta .pulsa-hint{font-size:12px;color:var(--sub);margin-top:4px;opacity:.6;}
+.tarjeta.programado{background:var(--card);}
 .equipo{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
 .equipo img{width:68px;height:68px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));}
 .nombre-equipo{font-size:17px;font-weight:700;line-height:1.2;}
@@ -89,21 +87,6 @@ nav{background:var(--card);border-bottom:1px solid var(--borde);display:flex;box
 .estado.directo{background:var(--rojo);color:#fff;animation:parpadeo 1.5s infinite;}
 .estado.hora{background:var(--accent-dim);color:var(--accent);font-size:20px;font-weight:800;letter-spacing:0;padding:8px 18px;border:1px solid rgba(232,168,56,.2);}
 @keyframes parpadeo{0%,100%{opacity:1}50%{opacity:.55}}
-
-/* MATCH DETAIL (expandable) */
-.detalle-match{display:none;background:var(--card);border:1px solid var(--borde);border-top:0;border-radius:0 0 16px 16px;padding:16px 20px;margin-top:-4px;}
-.detalle-match.open{display:block;animation:fadeUp .25s ease;}
-.detalle-match .det-loading{text-align:center;padding:16px;color:var(--sub);font-size:16px;}
-.det-section{margin-bottom:12px;}
-.det-section:last-child{margin-bottom:0;}
-.det-title{font-size:16px;font-weight:700;color:var(--accent);margin-bottom:8px;letter-spacing:.5px;}
-.det-event{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:18px;border-bottom:1px solid var(--borde);}
-.det-event:last-child{border-bottom:none;}
-.det-min{font-family:'Lora',serif;font-weight:700;color:var(--accent);min-width:42px;text-align:right;}
-.det-icon{font-size:20px;flex-shrink:0;}
-.det-player{color:var(--texto);}
-.det-assist{color:var(--sub);font-size:15px;}
-.det-empty{font-size:16px;color:var(--sub);font-style:italic;padding:6px 0;}
 
 /* STANDINGS */
 .tabla-clas{width:100%;border-collapse:separate;border-spacing:0 6px;}
@@ -250,7 +233,7 @@ nav{background:var(--card);border-bottom:1px solid var(--borde);display:flex;box
 
 <script>
 const API='https://api.football-data.org/v4',COMP='PD',PROXY='https://corsproxy.io/?';
-let TOKEN='',curMD=1,maxMD=38,compData=null,matchCache={};
+let TOKEN='',curMD=1,maxMD=38,compData=null;
 
 window.addEventListener('DOMContentLoaded',()=>{
   const saved=localStorage.getItem('fdata_token');
@@ -355,7 +338,7 @@ async function loadMatchday(md){
   c.innerHTML='<div class="loader">Cargando jornada '+md+'…</div>';
   try{
     const d=await apiFetch('/competitions/'+COMP+'/matches?matchday='+md);
-    renderMatchCards(c,d.matches,true);
+    renderMatchCards(c,d.matches);
   }catch(e){c.innerHTML='<div class="error-msg">'+e.message+'</div>';}
 }
 function changeMD(d){const n=curMD+d;if(n>=1&&n<=maxMD)loadMatchday(n);}
@@ -368,12 +351,12 @@ async function loadUpcoming(){
     const d=await apiFetch('/competitions/'+COMP+'/matches?status=SCHEDULED');
     const m=(d.matches||[]).slice(0,20);
     if(!m.length){c.innerHTML='<div class="empty-msg">No hay partidos programados</div>';return;}
-    renderMatchCards(c,m,false);
+    renderMatchCards(c,m);
   }catch(e){c.innerHTML='<div class="error-msg">'+e.message+'</div>';}
 }
 
 /* ---- RENDER MATCH CARDS ---- */
-function renderMatchCards(container,matches,expandable){
+function renderMatchCards(container,matches){
   if(!matches||!matches.length){container.innerHTML='<div class="empty-msg">No hay partidos</div>';return;}
   let html='',lastDate='';
   matches.forEach(m=>{
@@ -381,7 +364,6 @@ function renderMatchCards(container,matches,expandable){
     if(d!==lastDate){html+='<div class="sep-fecha"><span class="etiq-fecha">'+d+'</span><div class="linea-fecha"></div></div>';lastDate=d;}
     const live=m.status==='IN_PLAY'||m.status==='PAUSED'||m.status==='HALFTIME';
     const fin=m.status==='FINISHED';
-    const canExpand=expandable&&(live||fin);
     const home=m.homeTeam,away=m.awayTeam,sc=m.score?.fullTime||{};
     let center='';
     if(!live&&!fin){
@@ -395,72 +377,16 @@ function renderMatchCards(container,matches,expandable){
       }else{
         center+='<div class="estado final">Final</div>';
       }
-      if(canExpand) center+='<div class="pulsa-hint">Pulsa para ver detalle</div>';
     }
     const cls=live?'tarjeta en-directo':(!live&&!fin?'tarjeta programado':'tarjeta');
-    const onclick=canExpand?' onclick="toggleDetail('+m.id+',this)"':'';
-    html+='<div class="tarjeta-wrap"><div class="'+cls+'"'+onclick+'>'+
+    html+='<div class="'+cls+'">'+
       '<div class="equipo"><img src="'+home.crest+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"><div class="nombre-equipo">'+(home.shortName||home.name)+'</div></div>'+
       '<div class="marcador">'+center+'</div>'+
       '<div class="equipo"><img src="'+away.crest+'" alt="" loading="lazy" onerror="this.style.display=\'none\'"><div class="nombre-equipo">'+(away.shortName||away.name)+'</div></div>'+
-      '</div><div class="detalle-match" id="det-'+m.id+'"></div></div>';
+      '</div>';
   });
   container.innerHTML=html;
 }
-
-/* ---- MATCH DETAIL (expand on click) ---- */
-async function toggleDetail(matchId,cardEl){
-  const det=document.getElementById('det-'+matchId);
-  if(!det)return;
-  // Toggle open/close
-  if(det.classList.contains('open')){det.classList.remove('open');return;}
-  // Close any other open
-  document.querySelectorAll('.detalle-match.open').forEach(d=>d.classList.remove('open'));
-  det.classList.add('open');
-  // If already loaded, just show
-  if(matchCache[matchId]){renderDetail(det,matchCache[matchId]);return;}
-  det.innerHTML='<div class="det-loading">Cargando detalle…</div>';
-  try{
-    const d=await apiFetch('/matches/'+matchId);
-    matchCache[matchId]=d;
-    renderDetail(det,d);
-  }catch(e){det.innerHTML='<div class="error-msg" style="padding:12px;font-size:16px;">'+e.message+'</div>';}
-}
-
-function renderDetail(det,data){
-  const goals=data.goals||[];
-  const bookings=data.bookings||[];
-  let html='';
-  // Goals
-  html+='<div class="det-section"><div class="det-title">⚽ Goles</div>';
-  if(goals.length){
-    goals.forEach(g=>{
-      const min=g.minute?(g.minute+"'"):'';
-      const icon=g.type==='OWN'?'🔴':'⚽';
-      const assist=g.assist?.name?(' <span class="det-assist">('+g.assist.name+')</span>'):'';
-      const own=g.type==='OWN'?' <span class="det-assist">(propia)</span>':'';
-      html+='<div class="det-event"><span class="det-min">'+min+'</span><span class="det-icon">'+icon+'</span><span class="det-player">'+(g.scorer?.name||'—')+own+assist+'</span></div>';
-    });
-  }else{html+='<div class="det-empty">Sin goles</div>';}
-  html+='</div>';
-  // Bookings
-  html+='<div class="det-section"><div class="det-title">📋 Tarjetas</div>';
-  if(bookings.length){
-    bookings.forEach(b=>{
-      const min=b.minute?(b.minute+"'"):'';
-      const icon=b.card==='RED'?'🟥':(b.card==='YELLOW_RED'?'🟨🟥':'🟨');
-      html+='<div class="det-event"><span class="det-min">'+min+'</span><span class="det-icon">'+icon+'</span><span class="det-player">'+(b.player?.name||'—')+'</span></div>';
-    });
-  }else{html+='<div class="det-empty">Sin tarjetas</div>';}
-  html+='</div>';
-  // Debug button
-  const debugId='dbg-'+Math.random().toString(36).slice(2,8);
-  html+='<div style="margin-top:12px;text-align:center;"><button onclick="document.getElementById(\''+debugId+'\').style.display=\'block\'" style="background:var(--borde);color:var(--sub);border:none;padding:8px 16px;border-radius:6px;font-size:14px;cursor:pointer;">🔍 Ver datos API (diagnóstico)</button></div>';
-  html+='<pre id="'+debugId+'" style="display:none;background:var(--fondo);border:1px solid var(--borde);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;color:var(--sub);overflow-x:auto;white-space:pre-wrap;word-break:break-all;max-height:400px;overflow-y:auto;">'+escapeHtml(JSON.stringify(data,null,2))+'</pre>';
-  det.innerHTML=html;
-}
-
-function escapeHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 /* ---- HISTORIC ---- */
 function populateSeasons(seasons){
